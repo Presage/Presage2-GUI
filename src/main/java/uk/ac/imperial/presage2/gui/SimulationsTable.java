@@ -7,7 +7,11 @@ import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
@@ -39,6 +43,8 @@ public class SimulationsTable {
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 
+		tableViewer.setSorter(new SimulationsSorter());
+
 		// add columns
 		TableViewerColumn col = createTableViewerColumn("ID", 50, 0);
 		col.setLabelProvider(new ColumnLabelProvider() {
@@ -46,6 +52,13 @@ public class SimulationsTable {
 			public String getText(Object element) {
 				PersistentSimulation sim = (PersistentSimulation) element;
 				return Long.toString(sim.getID());
+			}
+		});
+		col.getColumn().addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				((SimulationsSorter) tableViewer.getSorter()).doSort(1);
+				tableViewer.refresh();
 			}
 		});
 
@@ -75,6 +88,13 @@ public class SimulationsTable {
 				return sim.getState();
 			}
 		});
+		col.getColumn().addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				((SimulationsSorter) tableViewer.getSorter()).doSort(2);
+				tableViewer.refresh();
+			}
+		});
 
 		col = createTableViewerColumn("Progress", 100, 0);
 		col.getColumn().setAlignment(SWT.RIGHT);
@@ -85,11 +105,17 @@ public class SimulationsTable {
 				return sim.getCurrentTime() + "/" + sim.getFinishTime();
 			}
 		});
+		col.getColumn().addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				((SimulationsSorter) tableViewer.getSorter()).doSort(3);
+				tableViewer.refresh();
+			}
+		});
 
 		tab.setControl(table);
 
 		tableViewer.setContentProvider(new ArrayContentProvider());
-
 		tableViewer.setInput(this.getSimulations());
 
 	}
@@ -112,6 +138,45 @@ public class SimulationsTable {
 			sims.add(this.sto.getSimulationById(simId));
 		}
 		return sims;
+	}
+
+	class SimulationsSorter extends ViewerSorter {
+		private int column;
+		private int direction;
+
+		void doSort(int column) {
+			if (column == this.column) {
+				direction = 1 - direction;
+			} else {
+				this.column = column;
+				this.direction = 0;
+			}
+		}
+
+		@Override
+		public int compare(Viewer viewer, Object e1, Object e2) {
+			PersistentSimulation s1 = (PersistentSimulation) e1;
+			PersistentSimulation s2 = (PersistentSimulation) e2;
+
+			int rc = 0;
+
+			switch (column) {
+			case 1: // ID
+				rc = s1.getID() > s2.getID() ? 1 : -1;
+				break;
+			case 2: // state
+				rc = getComparator().compare(s1.getState(), s2.getState());
+				break;
+			case 3: // progress
+				rc = s1.getCurrentTime() > s2.getCurrentTime() ? 1 : -1;
+				break;
+			}
+
+			if (direction == 1)
+				rc = -rc;
+			return rc;
+		}
+
 	}
 
 }
