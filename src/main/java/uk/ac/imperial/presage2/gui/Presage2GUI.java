@@ -3,6 +3,8 @@ package uk.ac.imperial.presage2.gui;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -67,11 +69,7 @@ public class Presage2GUI {
 				display.sleep();
 			}
 		}
-		shlPresage.addListener(SWT.CLOSE, new Listener() {
-			public void handleEvent(Event arg0) {
-				db.stop();
-			}
-		});
+		db.stop();
 	}
 
 	/**
@@ -82,10 +80,19 @@ public class Presage2GUI {
 		shlPresage.setSize(771, 543);
 		shlPresage.setText("Presage2");
 
-		TabFolder tabFolder = new TabFolder(shlPresage, SWT.NONE);
+		final TabFolder tabFolder = new TabFolder(shlPresage, SWT.NONE);
 		tabFolder.setBounds(10, 10, 749, 505);
 
 		simTable = new SimulationsTable(sto, tabFolder);
+
+		shlPresage.addControlListener(new ControlAdapter() {
+			@Override
+			public void controlResized(ControlEvent arg0) {
+				tabFolder.setBounds(10, 10,
+						shlPresage.getClientArea().width - 20,
+						shlPresage.getClientArea().height - 20);
+			}
+		});
 	}
 
 }

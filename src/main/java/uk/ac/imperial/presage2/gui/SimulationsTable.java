@@ -77,6 +77,7 @@ public class SimulationsTable {
 		});
 
 		col = createTableViewerColumn("Progress", 100, 0);
+		col.getColumn().setAlignment(SWT.RIGHT);
 		col.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
