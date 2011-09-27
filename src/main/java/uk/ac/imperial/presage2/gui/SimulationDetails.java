@@ -1,15 +1,25 @@
 package uk.ac.imperial.presage2.gui;
 
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
@@ -50,10 +60,16 @@ public class SimulationDetails extends CTabItem {
 	public void createContents() {
 		FormToolkit toolkit = new FormToolkit(this.getDisplay());
 		this.getParent().setLayout(new FillLayout());
+		Composite wrapper = toolkit.createComposite(this.getParent(), SWT.NONE);
+		RowLayout layout = new RowLayout();
+		layout.type = SWT.VERTICAL;
+		layout.fill = true;
+		wrapper.setLayout(layout);
 		//
-		Section section = toolkit.createSection(this.getParent(),
-				ExpandableComposite.EXPANDED | ExpandableComposite.TITLE_BAR);
+		Section section = toolkit.createSection(wrapper,
+				ExpandableComposite.TITLE_BAR);
 		section.setText("Simulation Info");
+
 		//
 		Composite composite = toolkit.createComposite(section, SWT.NONE);
 		toolkit.paintBordersFor(composite);
@@ -149,7 +165,49 @@ public class SimulationDetails extends CTabItem {
 		text_finished.setText(sim.getFinishedAt() > 0 ? new Date(sim
 				.getFinishedAt()).toString() : "no");
 
-		this.setControl(section);
+		// parameter table.
+		TableViewer tableViewer = new TableViewer(wrapper, SWT.BORDER);
+		Table table = tableViewer.getTable();
+		table.setHeaderVisible(true);
+		table.setLinesVisible(true);
+
+		TableViewerColumn viewerColumn = new TableViewerColumn(tableViewer,
+				SWT.NONE);
+		TableColumn column = viewerColumn.getColumn();
+		column.setText("Parameter");
+		column.setWidth(200);
+		column.setResizable(true);
+		column.setMoveable(true);
+		viewerColumn.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				String[] params = (String[]) element;
+				return params[0];
+			}
+		});
+		viewerColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+		column = viewerColumn.getColumn();
+		column.setText("Value");
+		column.setWidth(200);
+		column.setResizable(true);
+		column.setMoveable(false);
+		viewerColumn.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				String[] params = (String[]) element;
+				return params[1];
+			}
+		});
+
+		tableViewer.setContentProvider(new ArrayContentProvider());
+		List<String[]> params = new LinkedList<String[]>();
+		for (String p : sim.getParameters().keySet()) {
+			params.add(new String[] { p, (String) sim.getParameters().get(p) });
+		}
+		tableViewer.setInput(params);
+
+		this.setControl(wrapper);
+
 	}
 
 	public void dispose() {
