@@ -1,19 +1,24 @@
 package uk.ac.imperial.presage2.gui;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
@@ -22,20 +27,23 @@ import uk.ac.imperial.presage2.core.db.persistent.PersistentSimulation;
 
 public class SimulationsTable {
 
-	private final TabItem tab;
+	private final CTabItem tab;
 
 	private final TableViewer tableViewer;
 	private Table table;
 
 	private final StorageService sto;
 
-	private final TabFolder tabFolder;
+	private final CTabFolder tabFolder;
 
-	SimulationsTable(StorageService sto, TabFolder parent) {
+	Map<Long, SimulationDetails> simulationTabs = new HashMap<Long, SimulationDetails>();
+
+	SimulationsTable(StorageService sto, CTabFolder parent) {
 		this.sto = sto;
 		this.tabFolder = parent;
-		tab = new TabItem(parent, SWT.NONE);
+		tab = new CTabItem(parent, SWT.NONE);
 		tab.setText("Simulations");
+		tab.setShowClose(false);
 
 		tableViewer = new TableViewer(parent, SWT.BORDER | SWT.FULL_SELECTION);
 
@@ -118,6 +126,30 @@ public class SimulationsTable {
 		tableViewer.setContentProvider(new ArrayContentProvider());
 		tableViewer.setInput(this.getSimulations());
 
+		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
+
+			public void doubleClick(DoubleClickEvent arg0) {
+				StructuredSelection selection = (StructuredSelection) arg0
+						.getSelection();
+				PersistentSimulation sim = (PersistentSimulation) selection
+						.getFirstElement();
+				openSimulationtab(sim);
+			}
+		});
+	}
+
+	protected void openSimulationtab(PersistentSimulation sim) {
+		long simID = sim.getID();
+		if (simulationTabs.containsKey(simID)) {
+			if (!simulationTabs.get(simID).isDisposed()) {
+				tabFolder.setSelection(simulationTabs.get(simID));
+				return;
+			} else {
+				simulationTabs.remove(simID);
+			}
+		}
+		simulationTabs.put(simID, new SimulationDetails(sim, tabFolder));
+		tabFolder.setSelection(simulationTabs.get(simID));
 	}
 
 	private TableViewerColumn createTableViewerColumn(String title, int bound,

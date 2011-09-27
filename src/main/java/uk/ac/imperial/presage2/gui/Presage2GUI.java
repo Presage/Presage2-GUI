@@ -3,13 +3,11 @@ package uk.ac.imperial.presage2.gui;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TabFolder;
 
 import uk.ac.imperial.presage2.core.db.DatabaseModule;
 import uk.ac.imperial.presage2.core.db.DatabaseService;
@@ -77,10 +75,10 @@ public class Presage2GUI {
 	 */
 	protected void createContents() {
 		shlPresage = new Shell();
-		shlPresage.setSize(771, 543);
+		shlPresage.setSize(800, 600);
 		shlPresage.setText("Presage2");
 
-		final TabFolder tabFolder = new TabFolder(shlPresage, SWT.NONE);
+		final CTabFolder tabFolder = new CTabFolder(shlPresage, SWT.NONE);
 		tabFolder.setBounds(10, 10, 749, 505);
 
 		simTable = new SimulationsTable(sto, tabFolder);
