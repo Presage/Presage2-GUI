@@ -6,12 +6,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 
 import uk.ac.imperial.presage2.core.db.persistent.PersistentAgent;
 import uk.ac.imperial.presage2.core.db.persistent.PersistentSimulation;
@@ -106,40 +107,35 @@ public class EnvironmentVisualiser2DPlugin extends SWTPlayerPlugin {
 		controls.setMaxTime(finishTime);
 
 		// run control
-		final Thread player = new Thread(new Runnable() {
-			public void run() {
-				while (!isDisposed()) {
-					controls.waitForPlay();
+		controls.getBtnPlaypause().addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				drawArea.getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						if (!drawArea.isDisposed() && controls.isPlaying()) {
 
-					Display.getDefault().asyncExec(new Runnable() {
-						public void run() {
 							if (time >= maxTime) {
 								controls.setPlaying(false);
 								return;
 							}
 
 							time++;
-							drawArea.redraw();
+							update();
 
 							if (time == finishTime) {
 								controls.setPlaying(false);
-								controls.setProgress(finishTime);
 								return;
-							} else {
-								controls.setProgress(time);
 							}
-						}
-					});
 
-					try {
-						Thread.sleep(1000 / controls.getPlaybackRate());
-					} catch (InterruptedException e) {
-						e.printStackTrace();
+							drawArea.getDisplay().timerExec(
+									1000 / controls.getPlaybackRate(), this);
+						}
+
 					}
-				}
+
+				});
 			}
 		});
-		player.start();
 
 	}
 
