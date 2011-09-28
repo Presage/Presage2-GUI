@@ -8,6 +8,7 @@ public abstract class SWTPlugin extends CTabItem {
 
 	/**
 	 * Create the composite.
+	 * 
 	 * @param parent
 	 * @param style
 	 */
