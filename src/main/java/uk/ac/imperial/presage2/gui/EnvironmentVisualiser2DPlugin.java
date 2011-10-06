@@ -40,7 +40,6 @@ public class EnvironmentVisualiser2DPlugin extends SWTPlayerPlugin {
 
 		drawArea = new Canvas(parent, SWT.NONE);
 		final GridData gridData = new GridData();
-		// gridData.heightHint = parent.getBounds().height - 85;
 		gridData.grabExcessVerticalSpace = true;
 		gridData.grabExcessHorizontalSpace = true;
 		gridData.horizontalAlignment = GridData.FILL;
@@ -104,7 +103,6 @@ public class EnvironmentVisualiser2DPlugin extends SWTPlayerPlugin {
 
 	@Override
 	protected void initPlayerControls(final PlayerControls controls) {
-		controls.setMaxTime(finishTime);
 
 		// run control
 		controls.getBtnPlaypause().addSelectionListener(new SelectionAdapter() {

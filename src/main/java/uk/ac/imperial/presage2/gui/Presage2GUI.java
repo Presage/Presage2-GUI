@@ -1,7 +1,5 @@
 package uk.ac.imperial.presage2.gui;
 
-import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.events.ControlAdapter;
@@ -31,17 +29,13 @@ public class Presage2GUI {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Display display = Display.getDefault();
-		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
-			public void run() {
-				try {
-					Presage2GUI window = new Presage2GUI();
-					window.open();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		try {
+			Presage2GUI window = new Presage2GUI();
+			window.open();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	Presage2GUI() throws Exception {

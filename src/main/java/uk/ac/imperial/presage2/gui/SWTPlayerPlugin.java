@@ -24,6 +24,7 @@ public abstract class SWTPlayerPlugin extends SWTPlugin {
 		super(parent, name);
 		this.sim = sim;
 
+		finishTime = sim.getFinishTime()-1;
 		// Composite fillWrap = new Composite(parent, SWT.NONE);
 		// fillWrap.setLayout(new FillLayout());
 
@@ -38,6 +39,7 @@ public abstract class SWTPlayerPlugin extends SWTPlugin {
 		controlGridData.minimumHeight = 85;
 		controlGridData.minimumWidth = 600;
 		controls.setLayoutData(controlGridData);
+		controls.setMaxTime(finishTime);
 		initPlayerControls(controls);
 
 		wrapper.setBounds(this.getBounds());

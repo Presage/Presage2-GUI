@@ -46,7 +46,7 @@ public class SimulationDetails extends CTabItem {
 		this.setShowClose(true);
 		this.setText(sim.getID() + ": " + sim.getName());
 		createContents();
-		new EnvironmentVisualiser2DPlugin(parent, sim);
+		new EnvironmentVisualiser3DPlugin(parent, sim);
 	}
 
 	/**

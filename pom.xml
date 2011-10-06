@@ -7,6 +7,11 @@
 
 	<name>Presage2-gui</name>
 
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<lwjgl.version>2.7.1</lwjgl.version>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>uk.ac.imperial.presage2</groupId>
@@ -81,6 +86,18 @@
 			<version>3.5.100.v20110425</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.lwjgl</groupId>
+			<artifactId>lwjgl</artifactId>
+			<version>${lwjgl.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.lwjgl</groupId>
+			<artifactId>lwjgl-util</artifactId>
+			<version>${lwjgl.version}</version>
+		</dependency>
+
+
 	</dependencies>
 
 	<repositories>
@@ -91,6 +108,11 @@
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
+		</repository>
+		<repository>
+			<id>lwjgl</id>
+			<name>lwjgl</name>
+			<url>http://adterrasperaspera.com/lwjgl</url>
 		</repository>
 	</repositories>
 
@@ -146,4 +168,43 @@
 			</properties>
 		</profile>
 	</profiles>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<configuration>
+					<artifactItems>
+						<artifactItem>
+							<groupId>org.lwjgl</groupId>
+							<artifactId>lwjgl-native</artifactId>
+							<version>${lwjgl.version}</version>
+							<type>jar</type>
+							<outputDirectory>${project.build.directory}/libs/natives</outputDirectory>
+							<overWrite>true</overWrite>
+						</artifactItem>
+					</artifactItems>
+				</configuration>
+				<executions>
+					<!-- <execution>
+						<id>unpack</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+					</execution> -->
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>
