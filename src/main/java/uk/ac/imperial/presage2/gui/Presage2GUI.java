@@ -4,6 +4,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
@@ -13,6 +15,8 @@ import uk.ac.imperial.presage2.core.db.StorageService;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 
 public class Presage2GUI {
 
@@ -21,7 +25,8 @@ public class Presage2GUI {
 	private final DatabaseService db;
 	private final StorageService sto;
 
-	private SimulationsTable simTable;
+	Menu pluginMenu;
+	CTabFolder tabFolder;
 
 	/**
 	 * Launch the application.
@@ -72,10 +77,24 @@ public class Presage2GUI {
 		shlPresage.setSize(800, 600);
 		shlPresage.setText("Presage2");
 
-		final CTabFolder tabFolder = new CTabFolder(shlPresage, SWT.NONE);
+		tabFolder = new CTabFolder(shlPresage, SWT.NONE);
 		tabFolder.setBounds(10, 10, 749, 505);
 
-		simTable = new SimulationsTable(sto, tabFolder);
+		new SimulationsTable(sto, tabFolder);
+
+		Menu menu = new Menu(shlPresage, SWT.BAR);
+		shlPresage.setMenuBar(menu);
+
+		MenuItem mntmPlugins_1 = new MenuItem(menu, SWT.CASCADE);
+		mntmPlugins_1.setText("Plugins");
+
+		pluginMenu = new Menu(mntmPlugins_1);
+		mntmPlugins_1.setMenu(pluginMenu);
+
+		addPlugin("2D Environment Visualisation",
+				EnvironmentVisualiser2DPlugin.class);
+		addPlugin("3D Environment Visualisation",
+				EnvironmentVisualiser3DPlugin.class);
 
 		shlPresage.addControlListener(new ControlAdapter() {
 			@Override
@@ -87,4 +106,16 @@ public class Presage2GUI {
 		});
 	}
 
+	void addPlugin(String name, final Class<?> clazz) {
+		MenuItem item = new MenuItem(pluginMenu, SWT.NONE);
+		item.setText(name);
+		item.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				PluginDialog dialog = new PluginDialog(shlPresage, sto,
+						tabFolder, clazz);
+				dialog.open();
+			}
+		});
+	}
 }
