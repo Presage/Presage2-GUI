@@ -83,7 +83,7 @@ public class EnvironmentVisualiser3DPlugin extends SWTPlayerPlugin {
 		xSize = Integer.parseInt(params.get("xSize").toString());
 		ySize = Integer.parseInt(params.get("ySize").toString());
 		zSize = Integer.parseInt(params.get("zSize").toString());
-		//zSize = 10;
+		// zSize = 10;
 
 		GLData data = new GLData();
 		drawArea = new GLCanvas(parent, SWT.NONE, data);
@@ -142,8 +142,6 @@ public class EnvironmentVisualiser3DPlugin extends SWTPlayerPlugin {
 
 					drawCuboid(xSize, ySize, zSize);
 
-					float[] pos = { 3.0f, 5.0f, 1.0f };
-
 					for (PersistentAgent a : sim.getAgents()) {
 						TransientAgentState state = a.getState(time);
 						renderAgent(state);
@@ -181,7 +179,7 @@ public class EnvironmentVisualiser3DPlugin extends SWTPlayerPlugin {
 
 	private void resize() {
 		Rectangle area = drawArea.getClientArea();
-		double windowRatio = (double) area.width / (double) area.height;
+		// double windowRatio = (double) area.width / (double) area.height;
 		double simRatio = ySize / xSize;
 		Rectangle visArea = new Rectangle(0, 0, area.width, area.height);
 

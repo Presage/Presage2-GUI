@@ -24,7 +24,7 @@ public abstract class SWTPlayerPlugin extends SWTPlugin {
 		super(parent, name);
 		this.sim = sim;
 
-		finishTime = sim.getFinishTime()-1;
+		finishTime = sim.getFinishTime() - 1;
 		// Composite fillWrap = new Composite(parent, SWT.NONE);
 		// fillWrap.setLayout(new FillLayout());
 

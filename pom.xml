@@ -126,7 +126,8 @@
 			</activation>
 			<properties>
 				<swt.groupId>org.eclipse.swt.cocoa</swt.groupId>
-				<swt.artifactId>macosx</swt.artifactId>
+				<swt.artifactId>macosx-x86_64</swt.artifactId>
+				<lwjgl.native>macosx</lwjgl.native>
 			</properties>
 		</profile>
 		<profile>
@@ -139,6 +140,7 @@
 			<properties>
 				<swt.groupId>org.eclipse.swt.win32.win32</swt.groupId>
 				<swt.artifactId>x86</swt.artifactId>
+				<lwjgl.native>windows</lwjgl.native>
 			</properties>
 		</profile>
 		<profile>
@@ -152,6 +154,7 @@
 			<properties>
 				<swt.groupId>org.eclipse.swt.gtk.linux</swt.groupId>
 				<swt.artifactId>x86_64</swt.artifactId>
+				<lwjgl.native>linux</lwjgl.native>
 			</properties>
 		</profile>
 		<profile>
@@ -165,6 +168,7 @@
 			<properties>
 				<swt.groupId>org.eclipse.swt.gtk.linux</swt.groupId>
 				<swt.artifactId>x86</swt.artifactId>
+				<lwjgl.native>linux</lwjgl.native>
 			</properties>
 		</profile>
 	</profiles>
@@ -196,7 +200,7 @@
 					</artifactItems>
 				</configuration>
 				<executions>
-					<!-- <execution>
+					<!--  <execution>
 						<id>unpack</id>
 						<phase>generate-resources</phase>
 						<goals>
@@ -204,6 +208,20 @@
 						</goals>
 					</execution> -->
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<configuration>
+					<executable>java</executable>
+					<arguments>
+						<argument>-Djava.library.path=${project.build.directory}/libs/natives/${lwjgl.native}</argument>
+						<argument>-classpath</argument>
+						<classpath/>
+						<argument>uk.ac.imperial.presage2.gui.Presage2GUI</argument>
+						<argument>-XstartOnFirstThread</argument>
+					</arguments>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
